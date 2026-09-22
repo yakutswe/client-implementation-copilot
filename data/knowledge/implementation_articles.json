@@ -1,0 +1,30 @@
+[
+  {
+    "id": "KB-MAP-001",
+    "title": "Customer Field Mapping Guide",
+    "source": "docs://deploybridge/field-mapping",
+    "tags": ["mapping", "schema", "fields", "integration"],
+    "content": "Map customer source fields into canonical platform fields before validation. Supported aliases include id to customer_id, company to company_name, email to contact_email, tier to plan, and headcount to employee_count. Unsupported or duplicate fields must be reported for human review. Never guess an unknown field mapping."
+  },
+  {
+    "id": "KB-VAL-001",
+    "title": "Customer Validation Requirements",
+    "source": "docs://deploybridge/customer-validation",
+    "tags": ["validation", "email", "plan", "employee count"],
+    "content": "A customer record requires customer_id, company_name, contact_email, plan, and employee_count. The plan must be starter, growth, or enterprise. Employee count must be greater than zero. Email addresses must contain a valid local part and domain. Invalid records cannot proceed to implementation planning."
+  },
+  {
+    "id": "KB-PLAN-001",
+    "title": "Implementation Readiness Checklist",
+    "source": "docs://deploybridge/implementation-readiness",
+    "tags": ["planning", "readiness", "deployment", "onboarding"],
+    "content": "Implementation planning begins only after schema mapping and customer validation succeed. The implementation engineer should confirm data ownership, integration scope, sandbox access, success criteria, rollback expectations, and the required human approver before proposing deployment actions."
+  },
+  {
+    "id": "KB-SAFE-001",
+    "title": "Deployment Safety and Approval Policy",
+    "source": "docs://deploybridge/deployment-safety",
+    "tags": ["safety", "approval", "audit", "production"],
+    "content": "DeployBridge may analyze data and recommend a deployment plan without external side effects. Any production write, configuration change, or integration execution requires explicit human approval. Approved actions must match the reviewed scope and must be recorded in an audit log."
+  }
+]
