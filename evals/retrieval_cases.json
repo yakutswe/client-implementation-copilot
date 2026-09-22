@@ -1,0 +1,47 @@
+[
+  {
+    "case_id": "RET-001",
+    "query": "How should customer fields be mapped into the platform schema?",
+    "expected_document_id": "KB-MAP-001"
+  },
+  {
+    "case_id": "RET-002",
+    "query": "What should happen when duplicate source fields map to one target?",
+    "expected_document_id": "KB-MAP-001"
+  },
+  {
+    "case_id": "RET-003",
+    "query": "Which customer plan values are valid?",
+    "expected_document_id": "KB-VAL-001"
+  },
+  {
+    "case_id": "RET-004",
+    "query": "What employee count is allowed during customer validation?",
+    "expected_document_id": "KB-VAL-001"
+  },
+  {
+    "case_id": "RET-005",
+    "query": "What must be confirmed before implementation planning begins?",
+    "expected_document_id": "KB-PLAN-001"
+  },
+  {
+    "case_id": "RET-006",
+    "query": "Check sandbox access, success criteria, and rollback expectations",
+    "expected_document_id": "KB-PLAN-001"
+  },
+  {
+    "case_id": "RET-007",
+    "query": "What approval is required for a production configuration change?",
+    "expected_document_id": "KB-SAFE-001"
+  },
+  {
+    "case_id": "RET-008",
+    "query": "Can a production write run without human approval and an audit record?",
+    "expected_document_id": "KB-SAFE-001"
+  },
+  {
+    "case_id": "RET-009",
+    "query": "What is tomorrow's weather forecast?",
+    "expected_document_id": null
+  }
+]
