@@ -72,4 +72,60 @@ def test_root() -> None:
         "status": "running",
         "documentation": "/docs",
     }
+
+
+def test_maps_customer_aliases() -> None:
+    response = client.post(
+        "/api/v1/customers/map",
+        json={
+            "id": "cust-201",
+            "company": "Northstar Logistics",
+            "email": "ops@northstar.example",
+            "tier": "enterprise",
+            "headcount": 250,
+        },
+    )
+
+    assert response.status_code == 200
+
+    body = response.json()
+
+    assert body["ready_for_validation"] is True
+    assert body["issues"] == []
+    assert body["mapped_data"] == {
+        "customer_id": "cust-201",
+        "company_name": "Northstar Logistics",
+        "contact_email": "ops@northstar.example",
+        "plan": "enterprise",
+        "employee_count": 250,
+    }
+
+
+def test_reports_incomplete_customer_mapping() -> None:
+    response = client.post(
+        "/api/v1/customers/map",
+        json={
+            "id": "cust-202",
+            "company": "Harbor Systems",
+            "unsupported_field": "not mapped",
+        },
+    )
+
+    assert response.status_code == 200
+
+    body = response.json()
+    issue_codes = {issue["code"] for issue in body["issues"]}
+    missing_targets = {
+        issue["target_field"]
+        for issue in body["issues"]
+        if issue["code"] == "missing_target_field"
+    }
+
+    assert body["ready_for_validation"] is False
+    assert "unmapped_source_field" in issue_codes
+    assert missing_targets == {
+        "contact_email",
+        "employee_count",
+        "plan",
+    }
     
