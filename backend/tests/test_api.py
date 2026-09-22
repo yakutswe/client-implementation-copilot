@@ -206,4 +206,56 @@ def test_prepare_endpoint_stops_on_validation_failure() -> None:
         "plan",
         "employee_count",
     }.issubset(invalid_fields)
-    
+def test_searches_cited_implementation_knowledge() -> None:
+    response = client.post(
+        "/api/v1/knowledge/search",
+        json={
+            "query": "production approval audit safety",
+            "top_k": 2,
+        },
+    )
+
+    assert response.status_code == 200
+
+    body = response.json()
+
+    assert body["query"] == "production approval audit safety"
+    assert body["matches"]
+    assert len(body["matches"]) <= 2
+    assert body["matches"][0]["id"] == "KB-SAFE-001"
+    assert body["matches"][0]["citation"].startswith("KB-SAFE-001")
+
+
+def test_knowledge_search_returns_empty_evidence() -> None:
+    response = client.post(
+        "/api/v1/knowledge/search",
+        json={
+            "query": "weather forecast rainfall",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["matches"] == []
+
+
+def test_knowledge_search_rejects_short_query() -> None:
+    response = client.post(
+        "/api/v1/knowledge/search",
+        json={
+            "query": "a",
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_knowledge_search_rejects_invalid_result_limit() -> None:
+    response = client.post(
+        "/api/v1/knowledge/search",
+        json={
+            "query": "implementation planning",
+            "top_k": 25,
+        },
+    )
+
+    assert response.status_code == 422
