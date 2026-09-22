@@ -2,6 +2,10 @@ from typing import Any
 
 from fastapi import FastAPI
 
+from backend.app.customer_workflow import (
+    CustomerPreparationResult,
+    prepare_customer,
+)
 from backend.app.schema_mapper import MappingResult, map_customer_fields
 from backend.app.schema_validator import ValidationResult, validate_customer
 
@@ -9,7 +13,7 @@ from backend.app.schema_validator import ValidationResult, validate_customer
 app = FastAPI(
     title="DeployBridge API",
     description="Customer implementation validation and planning API.",
-    version="0.2.0",
+    version="0.3.0",
 )
 
 
@@ -28,6 +32,18 @@ def health_check() -> dict[str, str]:
         "status": "ok",
         "service": "deploybridge-api",
     }
+
+
+@app.post(
+    "/api/v1/customers/prepare",
+    response_model=CustomerPreparationResult,
+)
+def prepare_customer_payload(
+    payload: dict[str, Any],
+) -> CustomerPreparationResult:
+    """Map and validate customer data before planning."""
+
+    return prepare_customer(payload)
 
 
 @app.post(

@@ -128,4 +128,82 @@ def test_reports_incomplete_customer_mapping() -> None:
         "employee_count",
         "plan",
     }
+def test_prepares_valid_customer_for_planning() -> None:
+    response = client.post(
+        "/api/v1/customers/prepare",
+        json={
+            "id": "cust-401",
+            "company": "Northstar Logistics",
+            "email": "OPS@NORTHSTAR.EXAMPLE",
+            "tier": "enterprise",
+            "headcount": 250,
+        },
+    )
+
+    assert response.status_code == 200
+
+    body = response.json()
+
+    assert body["status"] == "ready"
+    assert body["ready_for_planning"] is True
+    assert body["mapping_issues"] == []
+    assert body["validation_issues"] == []
+    assert body["customer"]["customer_id"] == "cust-401"
+    assert body["customer"]["contact_email"] == "ops@northstar.example"
+
+
+def test_prepare_endpoint_stops_on_mapping_failure() -> None:
+    response = client.post(
+        "/api/v1/customers/prepare",
+        json={
+            "id": "cust-402",
+            "company": "Harbor Systems",
+            "unsupported_field": "not mapped",
+        },
+    )
+
+    assert response.status_code == 200
+
+    body = response.json()
+    issue_codes = {
+        issue["code"]
+        for issue in body["mapping_issues"]
+    }
+
+    assert body["status"] == "mapping_failed"
+    assert body["ready_for_planning"] is False
+    assert body["customer"] is None
+    assert "unmapped_source_field" in issue_codes
+    assert body["validation_issues"] == []
+
+
+def test_prepare_endpoint_stops_on_validation_failure() -> None:
+    response = client.post(
+        "/api/v1/customers/prepare",
+        json={
+            "id": "cust-403",
+            "company": "Atlas Freight",
+            "email": "invalid-email",
+            "tier": "unlimited",
+            "headcount": 0,
+        },
+    )
+
+    assert response.status_code == 200
+
+    body = response.json()
+    invalid_fields = {
+        issue["field"]
+        for issue in body["validation_issues"]
+    }
+
+    assert body["status"] == "validation_failed"
+    assert body["ready_for_planning"] is False
+    assert body["customer"] is None
+    assert body["mapping_issues"] == []
+    assert {
+        "contact_email",
+        "plan",
+        "employee_count",
+    }.issubset(invalid_fields)
     
